@@ -1,0 +1,32 @@
+.statistics-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2c3e70; /* Tamna pozadina kartice */
+    color: #ecf0f1; /* Svetla boja za tekst */
+    padding: 30px;
+    border-radius: 10px; /* Zaobljeni uglovi */
+    gap: 3rem;
+}
+
+.statistics-card-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.statistics-title {
+    font-size: 20px;
+    font-weight: bold; /* Ističe naslov */
+    margin: 0;
+}
+
+.statistics-number {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.icon {
+    font-size: 60px; /* Povećana veličina ikone */
+    color: #ecf0f1; /* Boja ikone */
+}

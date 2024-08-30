@@ -1,0 +1,64 @@
+/* Navbar.css */
+.navbar {
+  width: 100%;
+  background-color: #333;
+  padding: 1rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-links {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin: 0 1rem;
+}
+
+.navbar-links a, .navbar-links button {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navbar-links a:hover, .navbar-links button:hover {
+  color: #ff6347; /* Promeni boju na hover */
+}
+
+.navbar-links a.active {
+  color: #ff6347; /* Boja za aktivni link */
+  text-decoration: underline; /* Podvucite aktivni link */
+}
+
+.navbar-links button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.navbar-links button:hover {
+  color: #ff6347; /* Promeni boju na hover */
+}
+
+.welcome {
+  margin-left: 1rem; /* Razmak od ostatka navbara */
+  font-weight: bold;
+  color: #ff6347; 
+  border: none;
+  font-size: 1.2rem;
+}
+
