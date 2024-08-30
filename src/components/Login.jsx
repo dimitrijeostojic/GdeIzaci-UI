@@ -8,7 +8,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
+
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -30,8 +30,6 @@ const Login = () => {
       console.log(error.response.data);
     }
   };
-
-
 
   return (
     <div className="login-container">

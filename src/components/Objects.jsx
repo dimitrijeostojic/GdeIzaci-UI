@@ -23,7 +23,7 @@ const Objects = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       const userRole = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-      setUserRole(userRole); // Pretpostavljamo da se uloga nalazi u `role` polju tokena
+      setUserRole(userRole);
     }
     fetchObjects();
     fetchPlaceItems(); // Dodajte ovu funkciju za preuzimanje placeItems
@@ -82,21 +82,21 @@ const Objects = () => {
   };
 
   const handleAddObject = async (newObject) => {
-  try {
-    const token = localStorage.getItem('token');
-    
-    await axios.post('https://localhost:5000/api/Place', newObject, {  // Dodaj JSON.stringify
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    alert('Object added successfully');
-    fetchObjects(); // Osvježite listu objekata
-  } catch (error) {
-    console.error('Error adding object:', error);
-    alert('Error adding object.');
-  }
-};
+    try {
+      const token = localStorage.getItem('token');
+
+      await axios.post('https://localhost:5000/api/Place', newObject, {  // Dodaj JSON.stringify
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      alert('Object added successfully');
+      fetchObjects(); // Osvježite listu objekata
+    } catch (error) {
+      console.error('Error adding object:', error);
+      alert('Error adding object.');
+    }
+  };
 
 
   return (
@@ -123,7 +123,7 @@ const Objects = () => {
             <option value="rooftop">Rooftop</option>
             <option value="restaurant">Restaurant</option>
           </select>
-          
+
           <button className="add-object-button" disabled={userRole === 'RegularUser'} onClick={() => setIsModalOpen(true)}>+ Add Object</button>
         </div>
         <div className="objects-grid">

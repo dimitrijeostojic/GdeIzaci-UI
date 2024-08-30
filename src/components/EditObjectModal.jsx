@@ -21,13 +21,13 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
         // Učitaj placeItems iz baze kada se komponenta učita
         const fetchPlaceItems = async () => {
             try {
-              const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
-              setPlaceItems(response.data);
-               setSelectedPlaceItem(types);
+                const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
+                setPlaceItems(response.data);
+                setSelectedPlaceItem(types);
             } catch (error) {
-              console.error('Error fetching place items:', error);
+                console.error('Error fetching place items:', error);
             }
-          };
+        };
 
         fetchPlaceItems();
     }, []);
@@ -57,7 +57,7 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
 
         } catch (error) {
             console.error('Error adding object:', error);
-            
+
         }
     };
 

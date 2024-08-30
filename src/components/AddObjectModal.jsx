@@ -20,12 +20,12 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
         // Učitaj placeItems iz baze kada se komponenta učita
         const fetchPlaceItems = async () => {
             try {
-              const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
-              setPlaceItems(response.data);
+                const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
+                setPlaceItems(response.data);
             } catch (error) {
-              console.error('Error fetching place items:', error);
+                console.error('Error fetching place items:', error);
             }
-          };
+        };
 
         fetchPlaceItems();
     }, []);
@@ -38,9 +38,6 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
     };
 
     const handleSubmit = async (e) => {
-
-        
-
         e.preventDefault();
 
         const newObject = {
@@ -57,7 +54,6 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
 
         } catch (error) {
             console.error('Error adding object:', error);
-            
         }
     };
 

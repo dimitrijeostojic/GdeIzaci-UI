@@ -11,7 +11,7 @@ const MapComponent = ({ location }) => {
 
     return (
         <LoadScript
-            googleMapsApiKey="AIzaSyCIcLsbBziflct4gc6WM2oVfelcx-mt3QM" // Zameniti sa tvojim API ključem
+            googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY} // Zameniti sa tvojim API ključem
         >
             <GoogleMap
                 mapContainerStyle={containerStyle}
