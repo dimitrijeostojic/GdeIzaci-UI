@@ -199,10 +199,12 @@ const ObjectDetails = () => {
 
     const getCoordinates = async (address) => {
         try {
+            console.log('API Key:', process.env.REACT_APP_GOOGLE_API_KEY);
+
             const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
                 params: {
                     address: address,
-                    key: 'AIzaSyCIcLsbBziflct4gc6WM2oVfelcx-mt3QM' // Zameni svojim pravim API ključem
+                    key: process.env.REACT_APP_GOOGLE_API_KEY // Zameni svojim pravim API ključem
                 }
             });
 
