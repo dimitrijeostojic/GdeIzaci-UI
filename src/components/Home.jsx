@@ -45,7 +45,6 @@ const Home = () => {
                     }
                 });
                 const selected = response.data.slice(-8);
-                // console.log(response.data);
                 setObjects(selected);
             } catch (error) {
                 console.error('Error fetching objects:', error);

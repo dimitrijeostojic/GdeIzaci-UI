@@ -29,8 +29,8 @@ function UsersList() {
 
   return (
     <div className="users">
-      <div className="users-list">
         <Navbar />
+      <div className="users-list">
         <h2>Users List</h2>
         {users && users.length > 0 ? (
           users.map((user, index) => (

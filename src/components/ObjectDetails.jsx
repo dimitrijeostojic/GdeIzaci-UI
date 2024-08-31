@@ -31,57 +31,80 @@ const ObjectDetails = () => {
         numberOfStars: 0
     });
 
+    const fetchObjectAndUser = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`https://localhost:5000/api/Place/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setObject(response.data);
+
+
+            const role=localStorage.getItem('role');
+            if (role==="Admin") {
+                setIsOwner(true);
+            }
+
+            const userResponse = await axios.get(`https://localhost:5000/api/User/${response.data.userCreatedID}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            setUser({
+                userName: userResponse.data.userName,
+                numberOfObjects: userResponse.data.numberOfObjects,
+                userID: userResponse.data.userID
+            });
+
+            // Ako objekat ima latitude i longitude, postavi ih direktno
+            if (response.data.latitude && response.data.longitude) {
+                setLocation({
+                    lat: response.data.latitude,
+                    lng: response.data.longitude
+                });
+            } else {
+                // Ako nema, pokušaj da ih dobiješ iz adrese
+                const coords = await getCoordinates(response.data.location);
+                if (coords) {
+                    setLocation(coords);
+                } else {
+                    setError('Unable to determine object location.');
+                }
+            }
+            // Postavi trenutnu ocenu iz baze
+            setRating(response.data.rating || 0);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setError('Error fetching data.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const checkReservation = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const decodedToken = jwtDecode(token);
+            const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+            const response = await axios.get(`https://localhost:5000/api/Reservation/check-reservation/${id}?userId=${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setIsBooked(response.data);
+            setIsCancled(!response.data);
+        } catch (error) {
+            console.error('Error checking reservation:', error);
+        }
+    };
+
 
     useEffect(() => {
-        const fetchObjectAndUser = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get(`https://localhost:5000/api/Place/${id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setObject(response.data);
-                
-
-                const userResponse = await axios.get(`https://localhost:5000/api/User/${response.data.userCreatedID}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                setUser({
-                    userName: userResponse.data.userName,
-                    numberOfObjects: userResponse.data.numberOfObjects,
-                    userID: userResponse.data.userID
-                });
-
-                // Ako objekat ima latitude i longitude, postavi ih direktno
-                if (response.data.latitude && response.data.longitude) {
-                    setLocation({
-                        lat: response.data.latitude,
-                        lng: response.data.longitude
-                    });
-                } else {
-                    // Ako nema, pokušaj da ih dobiješ iz adrese
-                    const coords = await getCoordinates(response.data.location);
-                    if (coords) {
-                        setLocation(coords);
-                    } else {
-                        setError('Unable to determine object location.');
-                    }
-                }
-                // Postavi trenutnu ocenu iz baze
-                setRating(response.data.rating || 0);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setError('Error fetching data.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchObjectAndUser();
+        checkReservation();
     }, [id]);
 
     useEffect(() => {
@@ -110,26 +133,6 @@ const ObjectDetails = () => {
     //     fetchUserRating();
     // }, [id]);
 
-    useEffect(() => {
-        const checkReservation = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const decodedToken = jwtDecode(token);
-                const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-                const response = await axios.get(`https://localhost:5000/api/Reservation/check-reservation/${id}?userId=${userId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setIsBooked(response.data);
-                setIsCancled(!response.data);
-            } catch (error) {
-                console.error('Error checking reservation:', error);
-            }
-        };
-
-        checkReservation();
-    }, [id]);
 
     const handleRatingChange = async (newRating) => {
         try {
@@ -183,9 +186,13 @@ const ObjectDetails = () => {
             const token = localStorage.getItem('token');
             const decodedToken = jwtDecode(token);
             const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-            await axios.delete(`https://localhost:5000/api/Reservation/check-reservation/${id}?userId=${userId}`, {
+            await axios.delete(`https://localhost:5000/api/Reservation/check-reservation/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
+                },
+                params:{
+                    id:id,
+                    userId:userId
                 }
             });
             setIsBooked(false);
@@ -247,22 +254,22 @@ const ObjectDetails = () => {
         }
     }
 
-    const handleEditObject = async (newObject) =>{
+    const handleEditObject = async (newObject) => {
         try {
             const token = localStorage.getItem('token');
-            
+
             await axios.put(`https://localhost:5000/api/Place/${id}`, newObject, {  // Dodaj JSON.stringify
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
             alert('Object successfully updated');
             window.location.reload();
-           // fetchObjects(); // Osvježite listu objekata
-          } catch (error) {
+            // fetchObjects(); // Osvježite listu objekata
+        } catch (error) {
             console.error('Error updating object:', error);
             alert('Error updating object.');
-          }
+        }
     }
 
 
@@ -316,10 +323,10 @@ const ObjectDetails = () => {
                         )}
                     </div>
                     <div className="book-button">
-                        <button className='book' onClick={handleBookNow} disabled={isBooked}>
+                        <button className='book' onClick={handleBookNow} disabled={isBooked || isOwner}>
                             {isBooked ? 'Booked' : 'Book Now'}
                         </button>
-                        <button className='book' onClick={handleCancel} disabled={isCancled}>Cancel</button>
+                        <button className='book' onClick={handleCancel} disabled={isCancled || isOwner}>Cancel</button>
                     </div>
                 </div>
             </div>
@@ -327,12 +334,12 @@ const ObjectDetails = () => {
                 isOpen={isModalOpen}
                 onRequestClose={() => setIsModalOpen(false)}
                 onEditObject={handleEditObject}
-                names = {object.name}
-                prices = {object.price}
-                locations = {object.location}
-                descriptions = {object.description}
-                types = {object.placeItem.name}
-                photoUrls = {object.photo}
+                names={object.name}
+                prices={object.price}
+                locations={object.location}
+                descriptions={object.description}
+                types={object.placeItem.name}
+                photoUrls={object.photo}
                 id={object.placeItem.placeItemID}
             />
         </div >

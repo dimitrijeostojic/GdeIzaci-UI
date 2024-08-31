@@ -4,35 +4,37 @@ import '../styles/ManagersList.css';
 import Navbar from './Navbar';
 import ManagerCard from './ManagerCard';
 
-function ManagersList() {
+const ManagersList = () => {
   const [managers, setManagers] = useState([]);
   const token = localStorage.getItem('token'); // Ili odakle god dohvatate token
 
-  useEffect(() => {
-    axios.get('https://localhost:5000/api/User/managers', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-      .then(response => {
-        console.log(response.data);
-        setManagers(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching managers:', error);
+  const GetManagers = async () => {
+    try {
+      const response = await axios.get('https://localhost:5000/api/User/managers', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
+      setManagers(response.data);
+    } catch (error) {
+      console.error('Error fetching managers:', error);
+    }
+  }
+
+  useEffect(() => {
+    GetManagers();
   }, []);
 
   return (
     <div className="managers">
-      <div className="managers-list">
         <Navbar />
+      <div className="managers-list">
         <h2>Managers List</h2>
         {managers && managers.length > 0 ? (
           managers.map((manager, index) => (
-            
-              <ManagerCard key={index} userName={manager.userName} email={manager.email} numberOfObjects={manager.numberOfObjects}/>
-            
+
+            <ManagerCard key={index} userName={manager.userName} email={manager.email} numberOfObjects={manager.numberOfObjects} />
+
           ))
         ) : (
           <p>No managers found.</p>

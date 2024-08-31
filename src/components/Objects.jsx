@@ -17,7 +17,7 @@ const Objects = () => {
   const [pageSize, setPageSize] = useState(8);
   const [userRole, setUserRole] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -76,6 +76,7 @@ const Objects = () => {
 
   const nextPage = () => setPageNumber(pageNumber + 1);
   const prevPage = () => setPageNumber(pageNumber - 1);
+
   const changePageSize = (e) => {
     setPageSize(Number(e.target.value));
     setPageNumber(1); // Resetujemo na prvu stranicu
@@ -114,7 +115,6 @@ const Objects = () => {
             type="text"
             placeholder="Search by title"
             className="search-input"
-            // value={filterQuery} // Povežite sa state-om
             onChange={(e) => { setFilterOn('Name'); handleFilter(e) }}
           />
           <select className="filter-select" onChange={(e) => { setFilterOn('PlaceItem'); handleFilter(e) }}>
@@ -126,7 +126,7 @@ const Objects = () => {
             <option value="restaurant">Restaurant</option>
           </select>
 
-          <button className="add-object-button" disabled={userRole === 'RegularUser'} onClick={() => setIsModalOpen(true)}>+ Add Object</button>
+          <button className="add-object-button" disabled={userRole === 'RegularUser' || userRole==="Admin"} onClick={() => setIsModalOpen(true)}>+ Add Object</button>
         </div>
         <div className="objects-grid">
           {objects.map((obj, index) => (
