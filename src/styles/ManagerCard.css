@@ -1,0 +1,22 @@
+  .manager-details {
+    margin: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid #f4f4f4;
+    padding: 10px 20px;
+    border-radius: 10px;
+  }
+  
+  .manager-details h3 {
+    font-size: 18px;
+  }
+
+  .manager-details a{
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .manager-details-right{
+    text-align: right;
+  }

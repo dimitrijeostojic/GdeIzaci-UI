@@ -5,9 +5,10 @@ import Register from './components/Register';
 import Home from './components/Home';
 import PrivateRoute from './components/PrivateRoute';
 import Objects from './components/Objects';
-import Manager from './components/Manager';
 import MyProfile from './components/MyProfile';
 import ObjectDetails from './components/ObjectDetails';
+import UsersList from './components/UsersList';
+import ManagersList from './components/ManagersList';
 
 function App() {
   
@@ -28,7 +29,8 @@ function App() {
         <Route path="/home" element={<PrivateRoute element={<Home />} />} />
         <Route path="/objects" element={<PrivateRoute element={<Objects />} />} />
         <Route path="/objects/:id" element={<PrivateRoute element={<ObjectDetails />} />} /> {/* Detalji objekta */}
-        <Route path="/managers" element={<PrivateRoute element={<Manager />} />} />
+        <Route path="/managers" element={<PrivateRoute element={<ManagersList />} />} />
+        <Route path="/users" element={<PrivateRoute element={<UsersList />} />} />
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />} />} />
       </Routes>
     </Router>

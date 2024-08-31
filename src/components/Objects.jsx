@@ -114,12 +114,14 @@ const Objects = () => {
             type="text"
             placeholder="Search by title"
             className="search-input"
-            value={filterQuery} // Povežite sa state-om
+            // value={filterQuery} // Povežite sa state-om
             onChange={(e) => { setFilterOn('Name'); handleFilter(e) }}
           />
           <select className="filter-select" onChange={(e) => { setFilterOn('PlaceItem'); handleFilter(e) }}>
             <option value="all">All</option>
             <option value="cafe">Café</option>
+            <option value="club">Club</option>
+            <option value="bar">Bar</option>
             <option value="rooftop">Rooftop</option>
             <option value="restaurant">Restaurant</option>
           </select>
