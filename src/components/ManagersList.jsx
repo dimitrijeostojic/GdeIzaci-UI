@@ -27,7 +27,7 @@ const ManagersList = () => {
 
   return (
     <div className="managers">
-        <Navbar />
+      <Navbar />
       <div className="managers-list">
         <h2>Managers List</h2>
         {managers && managers.length > 0 ? (

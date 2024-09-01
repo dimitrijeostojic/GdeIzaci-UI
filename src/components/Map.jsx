@@ -10,14 +10,8 @@ const MapComponent = ({ location }) => {
     if (!location) return null;
 
     return (
-        <LoadScript
-            googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY} // Zameniti sa tvojim API ključem
-        >
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={location}
-                zoom={12}
-            >
+        <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY}>
+            <GoogleMap mapContainerStyle={containerStyle} center={location} zoom={12}>
                 <Marker position={location} />
             </GoogleMap>
         </LoadScript>

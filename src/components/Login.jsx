@@ -22,10 +22,9 @@ const Login = () => {
       // Sačuvaj token u localStorage
       localStorage.setItem('token', response.data.jwtToken);
       localStorage.setItem('username', response.data.username);
-      localStorage.setItem('role',response.data.roles[0]);
+      localStorage.setItem('role', response.data.roles[0]);
       setError('');
       navigate('/home');
-
     } catch (error) {
       setError('Login failed. Please try again.');
       console.log(error.response.data);

@@ -13,9 +13,7 @@ const Register = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const selectedRoles = [role];
-
     try {
       const response = await axios.post('https://localhost:5000/api/Auth/Register', {
         username,
@@ -27,6 +25,7 @@ const Register = () => {
       navigate('/home'); // Preusmeri na stranicu dobrodošlice
       localStorage.setItem('token', response.data.jwtToken);
       localStorage.setItem('username', response.data.username);
+      localStorage.setItem('role', response.data.roles[0]);
 
     } catch (error) {
       setError('Registration failed. Please try again.');
@@ -39,30 +38,9 @@ const Register = () => {
       <div className="register-box">
         <h2 className="register-title">Register</h2>
         <form className="register-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Username"
-            className="register-input"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className="register-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="register-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <input type="text" placeholder="Username" className="register-input" value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <input type="email" placeholder="Email" className="register-input" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Password" className="register-input" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <button type="submit" className="register-button">Register</button>
         </form>
         {error && <p className="error-message">{error}</p>}

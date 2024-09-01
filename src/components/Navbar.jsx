@@ -15,7 +15,6 @@ const Navbar = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("role");
-    // Preusmeri korisnika na stranicu za prijavu
     navigate("/login");
   };
 
@@ -28,36 +27,23 @@ const Navbar = () => {
           </li>
         )}
         <li>
-          <Link 
-            to="/home" 
-            className={location.pathname === "/home" ? "active" : ""}
-          >
-            Main
-          </Link>
+          <Link to="/home" className={location.pathname === "/home" ? "active" : ""}>Main</Link>
         </li>
         <li>
-          <Link to="/objects" className={location.pathname === "/objects" ? "active" : ""}>
-            Objects
-          </Link>
+          <Link to="/objects" className={location.pathname === "/objects" ? "active" : ""}>Objects</Link>
         </li>
         {role === "Admin" && (
           <li>
-            <Link to="/users" className={location.pathname === "/users" ? "active" : ""}>
-              Users
-            </Link>
+            <Link to="/users" className={location.pathname === "/users" ? "active" : ""}>Users</Link>
           </li>
         )}
         {(role === "Manager" || role === "RegularUser") && (
           <li>
-            <Link to="/managers" className={location.pathname === "/managers" ? "active" : ""}>
-              Managers
-            </Link>
+            <Link to="/managers" className={location.pathname === "/managers" ? "active" : ""}>Managers</Link>
           </li>
         )}
         <li>
-          <Link to="/myprofile" className={location.pathname === "/myprofile" ? "active" : ""}>
-            My profile
-          </Link>
+          <Link to="/myprofile" className={location.pathname === "/myprofile" ? "active" : ""}>My profile</Link>
         </li>
         <li>
           <button onClick={handleLogout}>Logout</button>

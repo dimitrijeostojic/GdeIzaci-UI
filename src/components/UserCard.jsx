@@ -3,13 +3,12 @@ import '../styles/UserCard.css';
 import axios from 'axios';
 
 const UserCard = (props) => {
+    const token = localStorage.getItem('token');
 
     const handleChangeRole = async () => {
         try {
-            const token = localStorage.getItem('token');
             const isConfirmed = window.confirm('Do you want to set user to be a manager?');
             if (isConfirmed) {
-                // Pozivanje API-ja za promenu uloge korisnika
                 const response = await axios.put(`https://localhost:5000/api/User/changeRole/${props.userId}`,
                     { role: 'Manager' },
                     {
@@ -19,14 +18,11 @@ const UserCard = (props) => {
                     }
                 );
                 if (response.status === 200) {
-                    // Možete dodati obaveštenje ili osvežiti podatke
-                    console.log(`Uloga korisnika ${props.userName} promenjena u Manager`);
                     props.refreshUsers();
                 } else {
                     console.error('Došlo je do greške prilikom promene uloge');
                 }
             }
-
         } catch (error) {
             console.error('Greška prilikom pozivanja API-ja:', error);
         }
@@ -34,8 +30,6 @@ const UserCard = (props) => {
 
     const handleDeleteUser = async () => {
         try {
-            // Pozivanje API-ja za brisanje korisnika
-            const token = localStorage.getItem('token');
             const isConfirmed = window.confirm('Do you want to delete this user?');
             if (isConfirmed) {
                 const response = await axios.delete(`https://localhost:5000/api/User/delete/${props.userId}`, {
@@ -47,12 +41,10 @@ const UserCard = (props) => {
                 if (response.status === 200) {
                     console.log(`Korisnik ${props.userName} obrisan`);
                     props.refreshUsers();
-
                 } else {
                     console.error('Došlo je do greške prilikom brisanja korisnika');
                 }
             }
-
         } catch (error) {
             console.error('Greška prilikom pozivanja API-ja:', error);
         }

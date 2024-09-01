@@ -17,18 +17,19 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
     const [placeItems, setPlaceItems] = useState([]);
     const [selectedPlaceItemDetails, setSelectedPlaceItemDetails] = useState(id);
 
-    useEffect(() => {
-        // Učitaj placeItems iz baze kada se komponenta učita
-        const fetchPlaceItems = async () => {
-            try {
-                const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
-                setPlaceItems(response.data);
-                setSelectedPlaceItem(types);
-            } catch (error) {
-                console.error('Error fetching place items:', error);
-            }
-        };
 
+    // Učitaj placeItems iz baze kada se komponenta učita
+    const fetchPlaceItems = async () => {
+        try {
+            const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
+            setPlaceItems(response.data);
+            setSelectedPlaceItem(types);
+        } catch (error) {
+            console.error('Error fetching place items:', error);
+        }
+    };
+
+    useEffect(() => {
         fetchPlaceItems();
     }, []);
 
@@ -50,13 +51,11 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
             photo: photo,
             placeItemId: selectedPlaceItemDetails, // Postavi ID umesto naziva
         };
-        console.log(newObject);
         try {
             onEditObject(newObject);
             onRequestClose();
-
         } catch (error) {
-            console.error('Error adding object:', error);
+            console.error('Error updating object:', error);
 
         }
     };
@@ -72,41 +71,19 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
             <h2>Edit Object</h2>
             <form onSubmit={handleSubmit}>
                 <label>Name:</label>
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
 
                 <label>Price:</label>
-                <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    required
-                />
+                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
 
                 <label>Location:</label>
-                <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    required
-                />
+                <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
 
                 <label>Description:</label>
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                />
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
 
                 <label>Type:</label>
-                <select
-                    value={selectedPlaceItem}
-                    onChange={handlePlaceItemChange}
-                    required
+                <select value={selectedPlaceItem} onChange={handlePlaceItemChange} required
                 >
                     {placeItems.map((item, index) => (
                         <option key={index} value={item.name}>
@@ -116,12 +93,8 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
                 </select>
 
                 <label>Upload Photo URL:</label>
-                <input
-                    type="text"
-                    value={photo}
-                    onChange={(e) => setPhoto(e.target.value)}
-                    required
-                />
+                <input type="text" value={photo} onChange={(e) => setPhoto(e.target.value)} required />
+
                 <button type="submit">Update Object</button>
                 <button type="button" onClick={onRequestClose}>Cancel</button>
             </form>

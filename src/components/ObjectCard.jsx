@@ -7,7 +7,7 @@ const ObjectCard = (prop) => {
 
   const navigate = useNavigate();
 
-  const ObjectDetails = () =>{
+  const ObjectDetails = () => {
     navigate(`/objects/${prop.id}`);
   }
 
@@ -19,7 +19,7 @@ const ObjectCard = (prop) => {
         <p className="object-price">${prop.price}</p>
         <p className="object-location">{prop.location}</p>
       </div>
-    </div>  
+    </div>
   );
 };
 

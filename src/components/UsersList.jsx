@@ -6,7 +6,7 @@ import UserCard from './UserCard';
 
 function UsersList() {
   const [users, setUsers] = useState([]);
-  const token = localStorage.getItem('token'); // Ili odakle god dohvatate token
+  const token = localStorage.getItem('token');
 
 
   // Funkcija za osvežavanje korisnika
@@ -24,17 +24,17 @@ function UsersList() {
   };
 
   useEffect(() => {
-   fetchUsers();
+    fetchUsers();
   }, []);
 
   return (
     <div className="users">
-        <Navbar />
+      <Navbar />
       <div className="users-list">
         <h2>Users List</h2>
         {users && users.length > 0 ? (
           users.map((user, index) => (
-              <UserCard key={index} userName={user.userName} email={user.email} numberOfObjects={user.numberOfObjects} role={user.roles[0]} userId={user.id} refreshUsers={fetchUsers}/>
+            <UserCard key={index} userName={user.userName} email={user.email} numberOfObjects={user.numberOfObjects} role={user.roles[0]} userId={user.id} refreshUsers={fetchUsers} />
           ))
         ) : (
           <p>No users found.</p>

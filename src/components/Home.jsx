@@ -35,22 +35,22 @@ const Home = () => {
         },
     ];
 
-    useEffect(() => {
-        const fetchObjects = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('https://localhost:5000/api/Place', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`  // Dodaj token u zaglavlje
-                    }
-                });
-                const selected = response.data.slice(-8);
-                setObjects(selected);
-            } catch (error) {
-                console.error('Error fetching objects:', error);
-            }
-        };
+    const fetchObjects = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('https://localhost:5000/api/Place', {
+                headers: {
+                    'Authorization': `Bearer ${token}`  // Dodaj token u zaglavlje
+                }
+            });
+            const selected = response.data.slice(-8);
+            setObjects(selected);
+        } catch (error) {
+            console.error('Error fetching objects:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchObjects();
     }, []);
 
@@ -61,7 +61,6 @@ const Home = () => {
                 <div className='home-title'>
                     <h2>New Objects</h2>
                 </div>
-
                 <div className="objects-container">
                     <div className="objects-grid">
                         {objects.map((obj, index) => (
@@ -71,7 +70,7 @@ const Home = () => {
                 </div>
 
                 <HomeDescription text={description.text} image1={description.image1} image2={description.image2} />
-
+                
                 <div className="statistics-section">
                     {statistics.map((stat, index) => (
                         <StatisticsCard key={index} title={stat.title} number={stat.number} icon={stat.icon} />

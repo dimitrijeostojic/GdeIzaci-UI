@@ -17,11 +17,11 @@ const Objects = () => {
   const [pageSize, setPageSize] = useState(8);
   const [userRole, setUserRole] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const token = localStorage.getItem('token');
+  const decodedToken = jwtDecode(token);
+
   useEffect(() => {
-    const token = localStorage.getItem('token');
     if (token) {
-      const decodedToken = jwtDecode(token);
       const userRole = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       setUserRole(userRole);
     }
@@ -31,11 +31,6 @@ const Objects = () => {
 
   const fetchObjects = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('Token is missing!');
-        // Možda je korisnik odjavljen, možeš ga preusmeriti na login stranicu
-      }
       const response = await axios.get('https://localhost:5000/api/Place', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -71,7 +66,7 @@ const Objects = () => {
 
   const handleFilter = (e) => {
     setFilterQuery(e.target.value);
-    setPageNumber(1); // Resetujemo na prvu stranicu
+    setPageNumber(1);
   };
 
   const nextPage = () => setPageNumber(pageNumber + 1);
@@ -84,18 +79,29 @@ const Objects = () => {
 
   const handleAddObject = async (newObject) => {
     try {
-      const token = localStorage.getItem('token');
-
-      await axios.post('https://localhost:5000/api/Place', newObject, {  // Dodaj JSON.stringify
+      const addPlaceRequestDto=newObject
+      await axios.post('https://localhost:5000/api/Place', addPlaceRequestDto, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
+
       alert('Object added successfully');
       fetchObjects(); // Osvježite listu objekata
     } catch (error) {
-      console.error('Error adding object:', error);
-      alert('Error adding object.');
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        console.error('Validation errors:', errors);
+
+        // Na primer, možeš proći kroz greške i prikazati ih
+        for (const [field, messages] of Object.entries(errors)) {
+          console.error(`${field}: ${messages.join(', ')}`);
+        }
+        alert('Error adding object: ' + Object.values(errors).flat().join('\n'));
+      } else {
+        console.error('Error adding object:', error);
+        alert('Error adding object.');
+      }
     }
   };
 
@@ -108,15 +114,8 @@ const Objects = () => {
           <h2>All Objects</h2>
         </div>
         <div className="toolbar">
-          <button className="sort-button" onClick={() => handleSort('price')}>
-            Sort Price {isAscending ? '↑' : '↓'}
-          </button>
-          <input
-            type="text"
-            placeholder="Search by title"
-            className="search-input"
-            onChange={(e) => { setFilterOn('Name'); handleFilter(e) }}
-          />
+          <button className="sort-button" onClick={() => handleSort('price')}>Sort Price {isAscending ? '↑' : '↓'}</button>
+          <input type="text" placeholder="Search by title" className="search-input" onChange={(e) => { setFilterOn('Name'); handleFilter(e) }} />
           <select className="filter-select" onChange={(e) => { setFilterOn('PlaceItem'); handleFilter(e) }}>
             <option value="all">All</option>
             <option value="cafe">Café</option>
@@ -125,37 +124,17 @@ const Objects = () => {
             <option value="rooftop">Rooftop</option>
             <option value="restaurant">Restaurant</option>
           </select>
-
-          <button className="add-object-button" disabled={userRole === 'RegularUser' || userRole==="Admin"} onClick={() => setIsModalOpen(true)}>+ Add Object</button>
+          <button className="add-object-button" disabled={userRole === 'RegularUser' || userRole === "Admin"} onClick={() => setIsModalOpen(true)}>+ Add Object</button>
         </div>
         <div className="objects-grid">
           {objects.map((obj, index) => (
-            <ObjectCard
-              key={index}
-              id={obj.placeID}
-              name={obj.name}
-              price={obj.price}
-              location={obj.location}
-              photo={obj.photo}
-            />
+            <ObjectCard key={index} id={obj.placeID} name={obj.name} price={obj.price} location={obj.location} photo={obj.photo} />
           ))}
         </div>
         <div className="pagination">
-          <button
-            onClick={prevPage}
-            disabled={pageNumber === 1}
-            className="pagination-button"
-          >
-            Previous
-          </button>
+          <button onClick={prevPage} disabled={pageNumber === 1} className="pagination-button">Previous</button>
           <span className="page-label">Page {pageNumber}</span>
-          <button
-            onClick={nextPage}
-            disabled={objects.length <= pageSize}
-            className="pagination-button"
-          >
-            Next
-          </button>
+          <button onClick={nextPage} disabled={objects.length < pageSize} className="pagination-button">Next</button>
           <select
             value={pageSize}
             onChange={changePageSize}

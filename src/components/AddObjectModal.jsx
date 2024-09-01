@@ -8,7 +8,7 @@ Modal.setAppElement('#root');
 
 const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
     const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
+    const [price, setPrice] = useState(0);
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
     const [photo, setPhoto] = useState('');
@@ -16,17 +16,19 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
     const [placeItems, setPlaceItems] = useState([]);
     const [selectedPlaceItemDetails, setSelectedPlaceItemDetails] = useState(null);
 
-    useEffect(() => {
-        // Učitaj placeItems iz baze kada se komponenta učita
-        const fetchPlaceItems = async () => {
-            try {
-                const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
-                setPlaceItems(response.data);
-            } catch (error) {
-                console.error('Error fetching place items:', error);
-            }
-        };
 
+    // Učitaj placeItems iz baze kada se komponenta učita
+    const fetchPlaceItems = async () => {
+        try {
+            const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
+            setPlaceItems(response.data);
+            setSelectedPlaceItemDetails(response.data[0].placeItemID);
+        } catch (error) {
+            console.error('Error fetching place items:', error);
+        }
+    };
+
+    useEffect(() => {
         fetchPlaceItems();
     }, []);
 
@@ -50,6 +52,12 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
         };
         try {
             onAddObject(newObject);
+            setName('');
+            setDescription('');
+            setLocation('');
+            setPhoto('');
+            setPrice(0);
+            setSelectedPlaceItemDetails(null);
             onRequestClose();
 
         } catch (error) {
@@ -68,42 +76,19 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
             <h2>Add New Object</h2>
             <form onSubmit={handleSubmit}>
                 <label>Name:</label>
-                <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                />
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
 
                 <label>Price:</label>
-                <input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    required
-                />
+                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
 
                 <label>Location:</label>
-                <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    required
-                />
+                <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
 
                 <label>Description:</label>
-                <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    required
-                />
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
 
                 <label>Type:</label>
-                <select
-                    value={selectedPlaceItem}
-                    onChange={handlePlaceItemChange}
-                    required
-                >
+                <select value={selectedPlaceItem} onChange={handlePlaceItemChange} required>
                     {placeItems.map((item, index) => (
                         <option key={index} value={item.name}>
                             {item.name}
@@ -112,12 +97,7 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
                 </select>
 
                 <label>Upload Photo URL:</label>
-                <input
-                    type="text"
-                    value={photo}
-                    onChange={(e) => setPhoto(e.target.value)}
-                    required
-                />
+                <input type="text" value={photo} onChange={(e) => setPhoto(e.target.value)} required />
                 <button type="submit">Add Object</button>
                 <button type="button" onClick={onRequestClose}>Cancel</button>
             </form>

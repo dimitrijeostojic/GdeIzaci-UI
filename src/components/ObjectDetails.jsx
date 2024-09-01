@@ -30,10 +30,11 @@ const ObjectDetails = () => {
         userID: '',
         numberOfStars: 0
     });
+    const token = localStorage.getItem('token');
+    const decodedToken = jwtDecode(token);
 
     const fetchObjectAndUser = async () => {
         try {
-            const token = localStorage.getItem('token');
             const response = await axios.get(`https://localhost:5000/api/Place/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -41,9 +42,8 @@ const ObjectDetails = () => {
             });
             setObject(response.data);
 
-
-            const role=localStorage.getItem('role');
-            if (role==="Admin") {
+            const role = localStorage.getItem('role');
+            if (role === "Admin") {
                 setIsOwner(true);
             }
 
@@ -59,22 +59,14 @@ const ObjectDetails = () => {
                 userID: userResponse.data.userID
             });
 
-            // Ako objekat ima latitude i longitude, postavi ih direktno
-            if (response.data.latitude && response.data.longitude) {
-                setLocation({
-                    lat: response.data.latitude,
-                    lng: response.data.longitude
-                });
+            console.log(response.data);
+            const coords = await getCoordinates(response.data.location);
+            if (coords) {
+                setLocation(coords);
             } else {
-                // Ako nema, pokušaj da ih dobiješ iz adrese
-                const coords = await getCoordinates(response.data.location);
-                if (coords) {
-                    setLocation(coords);
-                } else {
-                    setError('Unable to determine object location.');
-                }
+                setError('Unable to determine object location.');
             }
-            // Postavi trenutnu ocenu iz baze
+
             setRating(response.data.rating || 0);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -86,13 +78,12 @@ const ObjectDetails = () => {
 
     const checkReservation = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const decodedToken = jwtDecode(token);
             const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-            const response = await axios.get(`https://localhost:5000/api/Reservation/check-reservation/${id}?userId=${userId}`, {
+            const response = await axios.get(`https://localhost:5000/api/Reservation/check-reservation/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                params: { userId: userId }
             });
             setIsBooked(response.data);
             setIsCancled(!response.data);
@@ -100,7 +91,6 @@ const ObjectDetails = () => {
             console.error('Error checking reservation:', error);
         }
     };
-
 
     useEffect(() => {
         fetchObjectAndUser();
@@ -133,10 +123,8 @@ const ObjectDetails = () => {
     //     fetchUserRating();
     // }, [id]);
 
-
     const handleRatingChange = async (newRating) => {
         try {
-            const token = localStorage.getItem('token');
             const reviewData = {
                 rating: newRating,
                 placeID: id, // Zamenite stvarnim ID-jem mesta
@@ -158,8 +146,6 @@ const ObjectDetails = () => {
 
     const handleBookNow = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const decodedToken = jwtDecode(token);
             const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
             const reservationData = {
                 placeID: id,
@@ -183,22 +169,21 @@ const ObjectDetails = () => {
 
     const handleCancel = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const decodedToken = jwtDecode(token);
-            const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-            await axios.delete(`https://localhost:5000/api/Reservation/check-reservation/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                params:{
-                    id:id,
-                    userId:userId
-                }
-            });
-            setIsBooked(false);
-            setIsCancled(true);
-            alert('Reservation cancelled successfully.');
-
+            const isConfirmed = window.confirm('Do you want to cancel a reservation?');
+            if (isConfirmed) {
+                const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+                await axios.delete(`https://localhost:5000/api/Reservation/check-reservation/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    params: {
+                        id: id,
+                        userId: userId
+                    }
+                });
+                setIsBooked(false);
+                setIsCancled(true);
+            }
         } catch (error) {
             console.error('Error cancelling reservation:', error);
         }
@@ -206,12 +191,10 @@ const ObjectDetails = () => {
 
     const getCoordinates = async (address) => {
         try {
-            console.log('API Key:', process.env.REACT_APP_GOOGLE_API_KEY);
-
             const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
                 params: {
                     address: address,
-                    key: process.env.REACT_APP_GOOGLE_API_KEY // Zameni svojim pravim API ključem
+                    key: process.env.REACT_APP_GOOGLE_API_KEY
                 }
             });
 
@@ -238,16 +221,17 @@ const ObjectDetails = () => {
 
     const handleDeletePlace = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.delete(`https://localhost:5000/api/Place/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+            const isConfirmed = window.confirm('Do you want to delete this object?');
+            if (isConfirmed) {
+                await axios.delete(`https://localhost:5000/api/Place/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-            alert('Object deleted successfully.');
-            navigate('/home'); // Redirektuje na glavnu stranicu nakon brisanja
-
+                alert('Object deleted successfully.');
+                navigate('/home');
+            }
         } catch (error) {
             console.error('Error deleting object:', error);
             alert('Error deleting object.');
@@ -256,19 +240,31 @@ const ObjectDetails = () => {
 
     const handleEditObject = async (newObject) => {
         try {
-            const token = localStorage.getItem('token');
-
-            await axios.put(`https://localhost:5000/api/Place/${id}`, newObject, {  // Dodaj JSON.stringify
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            alert('Object successfully updated');
-            window.location.reload();
-            // fetchObjects(); // Osvježite listu objekata
+            const isConfirmed = window.confirm('Do you want to edit this objecti?');
+            const updatePlaceRequestDto = newObject;
+            if (isConfirmed) {
+                await axios.put(`https://localhost:5000/api/Place/${id}`, updatePlaceRequestDto, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                alert('Object successfully updated');
+                window.location.reload();
+            }
         } catch (error) {
-            console.error('Error updating object:', error);
-            alert('Error updating object.');
+            if (error.response && error.response.data && error.response.data.errors) {
+                const errors = error.response.data.errors;
+                console.error('Validation errors:', errors);
+
+                // Na primer, možeš proći kroz greške i prikazati ih
+                for (const [field, messages] of Object.entries(errors)) {
+                    console.error(`${field}: ${messages.join(', ')}`);
+                }
+                alert('Error updating object: ' + Object.values(errors).flat().join('\n'));
+            } else {
+                console.error('Error updating object:', error);
+                alert('Error updating object.');
+            }
         }
     }
 
@@ -292,7 +288,7 @@ const ObjectDetails = () => {
                         <p className='object-footer-rating'>Number of Stars:</p>
                         <Rating
                             initialRating={rating}
-                            onChange={(newRating) => handleRatingChange(newRating)} // Ispravno prosleđivanje funkcije
+                            onChange={(newRating) => handleRatingChange(newRating)}
                             emptySymbol={<FontAwesomeIcon icon={farStar} className="fa-star-o" />}
                             fullSymbol={<FontAwesomeIcon icon={faStar} className="fa-star" />}
                             fractions={2}
@@ -323,9 +319,7 @@ const ObjectDetails = () => {
                         )}
                     </div>
                     <div className="book-button">
-                        <button className='book' onClick={handleBookNow} disabled={isBooked || isOwner}>
-                            {isBooked ? 'Booked' : 'Book Now'}
-                        </button>
+                        <button className='book' onClick={handleBookNow} disabled={isBooked || isOwner}>{isBooked ? 'Booked' : 'Book Now'}</button>
                         <button className='book' onClick={handleCancel} disabled={isCancled || isOwner}>Cancel</button>
                     </div>
                 </div>
