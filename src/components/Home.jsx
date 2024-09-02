@@ -70,7 +70,7 @@ const Home = () => {
                 </div>
 
                 <HomeDescription text={description.text} image1={description.image1} image2={description.image2} />
-                
+
                 <div className="statistics-section">
                     {statistics.map((stat, index) => (
                         <StatisticsCard key={index} title={stat.title} number={stat.number} icon={stat.icon} />

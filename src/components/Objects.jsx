@@ -79,7 +79,7 @@ const Objects = () => {
 
   const handleAddObject = async (newObject) => {
     try {
-      const addPlaceRequestDto=newObject
+      const addPlaceRequestDto = newObject
       await axios.post('https://localhost:5000/api/Place', addPlaceRequestDto, {
         headers: {
           'Authorization': `Bearer ${token}`

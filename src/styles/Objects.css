@@ -76,15 +76,6 @@
     cursor: pointer;
     font-size: 15px;
   }
-  
-  .objects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    width: 100%;
-    text-align: center;
-    margin: 2rem 0;
-    padding: 0 20px; /* Dodaj padding levo i desno */
-  }
 
   .pagination {
     display: flex;

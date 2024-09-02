@@ -24,6 +24,7 @@ const ObjectDetails = () => {
     const [rating, setRating] = useState(0); // Dodaj stanje za ocenu
     const [isCancled, setIsCancled] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [averageRating, setAverageRating] = useState(null);
     const [user, setUser] = useState({
         userName: '',
         numberOfObjects: 0,
@@ -31,7 +32,28 @@ const ObjectDetails = () => {
         numberOfStars: 0
     });
     const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
     const decodedToken = jwtDecode(token);
+
+    
+    useEffect(() => {
+        fetchObjectAndUser();
+        checkReservation();
+        fetchAverageRating();
+        fetchRating();
+    }, [id]);
+
+    useEffect(() => {
+        const loggedInUser = localStorage.getItem('username');
+        if (loggedInUser === user.userName) {
+            setIsOwner(true);
+        }
+    }, [user.userName]);
+  
+    useEffect(() => {
+        fetchAverageRating();
+    }, [rating]);
+    
 
     const fetchObjectAndUser = async () => {
         try {
@@ -59,7 +81,6 @@ const ObjectDetails = () => {
                 userID: userResponse.data.userID
             });
 
-            console.log(response.data);
             const coords = await getCoordinates(response.data.location);
             if (coords) {
                 setLocation(coords);
@@ -67,7 +88,7 @@ const ObjectDetails = () => {
                 setError('Unable to determine object location.');
             }
 
-            setRating(response.data.rating || 0);
+            // setRating(response.data.rating || 0);
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Error fetching data.');
@@ -92,43 +113,40 @@ const ObjectDetails = () => {
         }
     };
 
-    useEffect(() => {
-        fetchObjectAndUser();
-        checkReservation();
-    }, [id]);
-
-    useEffect(() => {
-        const loggedInUser = localStorage.getItem('username');
-        if (loggedInUser === user.userName) {
-            setIsOwner(true);
-        }
-    }, [user.userName]);
-
-    // useEffect(() => {
-    //     const fetchUserRating = async () => {
-    //         try {
-    //             const token = localStorage.getItem('token');
-    //             const response = await axios.get(`https://localhost:5000/api/Review/${id}`, {
-    //                 headers: {
-    //                     'Authorization': `Bearer ${token}`
-    //                 }
-    //             });
-    //             console.log(response.data);
-    //             setRating(response.data || 0); // Postavi ocenu koju je korisnik dao
-    //         } catch (error) {
-    //             console.error('Error fetching user rating:', error);
-    //         }
-    //     };
-
-    //     fetchUserRating();
-    // }, [id]);
-
-    const handleRatingChange = async (newRating) => {
+    const fetchAverageRating = async () => {
         try {
+            const response = await axios.get(`https://localhost:5000/api/Review/average-rating/${id}`,{
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setAverageRating(response.data.numberOfStars);
+        } catch (error) {
+            console.error("Error fetching average rating:", error);
+        }
+    };
+
+    const fetchRating = async () => {
+        try {
+            const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+            const response = await axios.get(`https://localhost:5000/api/Review/${id}/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setRating(response.data.numberOfStars || 0); // Ako rating nije dostupan, postavite na 0
+        } catch (error) {
+            console.error("Error fetching user rating:", error);
+            setRating(0); // Postavite na 0 ako dođe do greške
+        }
+    };
+
+    const handleAddRatingChange = async (newRating) => {
+        try {
+            const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
             const reviewData = {
-                rating: newRating,
-                placeID: id, // Zamenite stvarnim ID-jem mesta
-                userID: user.userID, // Zamenite stvarnim ID-jem korisnika,
+                placeID: id,
+                userID: userId,
                 numberOfStars: newRating
             };
 
@@ -138,11 +156,31 @@ const ObjectDetails = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            setRating(newRating); // Ažuriraj ocenu lokalno
+            setRating(newRating);
         } catch (error) {
             console.error('Error updating rating:', error);
         }
     };
+
+    const handleEditRatingChange = async (newRating) => {
+        try {
+            const reviewData = {
+                placeID: id, // Zamenite stvarnim ID-jem mesta
+                numberOfStars: newRating
+            };
+
+            await axios.put(`https://localhost:5000/api/Review/${id}`, reviewData, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            setRating(newRating);
+        } catch (error) {
+            console.error('Error updating rating:', error);
+        }
+    };
+
 
     const handleBookNow = async () => {
         try {
@@ -286,14 +324,23 @@ const ObjectDetails = () => {
                         <h1>{object.name}</h1>
                         <p className='object-footer-type'>Object Type: {object.placeItem.name}</p>
                         <p className='object-footer-rating'>Number of Stars:</p>
-                        <Rating
-                            initialRating={rating}
-                            onChange={(newRating) => handleRatingChange(newRating)}
-                            emptySymbol={<FontAwesomeIcon icon={farStar} className="fa-star-o" />}
-                            fullSymbol={<FontAwesomeIcon icon={faStar} className="fa-star" />}
-                            fractions={2}
-                        />
-
+                        {role !== 'Admin' && (
+                            <Rating
+                                initialRating={rating}
+                                onChange={(newRating) => {
+                                    if (rating===0) {
+                                        handleAddRatingChange(newRating)
+                                    }
+                                    else{
+                                         handleEditRatingChange(newRating)
+                                    }
+                                }}
+                                emptySymbol={<FontAwesomeIcon icon={farStar} className="fa-star-o" />}
+                                fullSymbol={<FontAwesomeIcon icon={faStar} className="fa-star" />}
+                                fractions={2} 
+                            />
+                        )}
+                        <p className="average-grade">Average rating: {averageRating===null ? "No ratings available for this place" : averageRating}</p>
                         <p className='object-footer-location'>Location: {object.location}</p>
                         <p className='object-footer-price'>Price: ${object.price}</p>
                         <p className='object-footer-description'>Description: {object.description}</p>
