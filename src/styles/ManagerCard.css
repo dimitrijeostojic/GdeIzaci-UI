@@ -20,3 +20,13 @@
   .manager-details-right{
     text-align: right;
   }
+
+  .manager-details-right .objects-link {
+    cursor: pointer;
+    color: red;
+}
+
+.manager-details-right .objects-link.disabled {
+    cursor: default;
+    color: inherit;
+}

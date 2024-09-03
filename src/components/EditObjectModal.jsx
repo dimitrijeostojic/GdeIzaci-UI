@@ -3,14 +3,16 @@ import Modal from 'react-modal';
 import '../styles/Modal.css'; // Stilizovanje za modal
 import axios from 'axios';
 import '../styles/Modal.css';
+import DatePicker from 'react-datepicker';
 
 // Postavite appElement za pristupačnost
 Modal.setAppElement('#root');
 
-const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, locations, descriptions, types, photoUrls, id }) => {
+const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, dates, names, prices, locations, descriptions, types, photoUrls, id }) => {
     const [name, setName] = useState(names);
     const [price, setPrice] = useState(prices);
     const [location, setLocation] = useState(locations);
+    const [date, setDate] = useState(dates);
     const [description, setDescription] = useState(descriptions);
     const [photo, setPhoto] = useState(photoUrls);
     const [selectedPlaceItem, setSelectedPlaceItem] = useState('');
@@ -22,8 +24,8 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
     // Učitaj placeItems iz baze kada se komponenta učita
     const fetchPlaceItems = async () => {
         try {
-            const response = await axios.get('https://localhost:5000/api/PlaceItem',{
-                headers:{
+            const response = await axios.get('https://localhost:5000/api/PlaceItem', {
+                headers: {
                     'Authorization': `Bearer ${token}`
                 }
             }); // Ažurirajte URL ako je potrebno
@@ -52,6 +54,7 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
             name,
             description,
             location,
+            date,
             price,
             photo: photo,
             placeItemId: selectedPlaceItemDetails, // Postavi ID umesto naziva
@@ -83,6 +86,9 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
 
                 <label>Location:</label>
                 <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
+
+                <label>Date:</label>
+                <DatePicker selected={date} onChange={(date) => setDate(date)} dateFormat="dd/MM/yyyy" required />
 
                 <label>Description:</label>
                 <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />

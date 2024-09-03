@@ -27,11 +27,12 @@ const Objects = () => {
     }
     fetchObjects();
   }, [filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize]);
-  
+
+
   useEffect(() => {
     fetchPlaceItems();
   }, [])
-  
+
 
   const fetchObjects = async () => {
     try {
@@ -56,7 +57,7 @@ const Objects = () => {
 
   const fetchPlaceItems = async () => {
     try {
-      const response = await axios.get('https://localhost:5000/api/PlaceItem',{
+      const response = await axios.get('https://localhost:5000/api/PlaceItem', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -136,7 +137,7 @@ const Objects = () => {
         </div>
         <div className="objects-grid">
           {objects.map((obj, index) => (
-            <ObjectCard key={index} id={obj.placeID} name={obj.name} price={obj.price} location={obj.location} photo={obj.photo} />
+            <ObjectCard key={index} id={obj.placeID} date={obj.date} name={obj.name} price={obj.price} location={obj.location} photo={obj.photo} />
           ))}
         </div>
         <div className="pagination">

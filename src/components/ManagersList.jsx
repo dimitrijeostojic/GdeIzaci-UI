@@ -33,7 +33,7 @@ const ManagersList = () => {
         {managers && managers.length > 0 ? (
           managers.map((manager, index) => (
 
-            <ManagerCard key={index} userName={manager.userName} email={manager.email} numberOfObjects={manager.numberOfObjects} />
+            <ManagerCard key={index} id={manager.id} userName={manager.userName} email={manager.email} numberOfObjects={manager.numberOfObjects} />
 
           ))
         ) : (

@@ -9,9 +9,10 @@ import MyProfile from './components/MyProfile';
 import ObjectDetails from './components/ObjectDetails';
 import UsersList from './components/UsersList';
 import ManagersList from './components/ManagersList';
+import ManagerObjects from './components/ManagerObjects';
 
 function App() {
-  
+
   const [token, setToken] = useState(localStorage.getItem('token'));
 
   useEffect(() => {
@@ -19,17 +20,18 @@ function App() {
     setToken(localStorage.getItem('token'));
   }, []);
 
-  return (  
+  return (
     <Router>
       <Routes>
         <Route path="/" element={<Register />} />{" "}
-        <Route path="/login" element={<Login/>} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* Koristi PrivateRoute za zaštićene rute */}
         <Route path="/home" element={<PrivateRoute element={<Home />} />} />
         <Route path="/objects" element={<PrivateRoute element={<Objects />} />} />
         <Route path="/objects/:id" element={<PrivateRoute element={<ObjectDetails />} />} /> {/* Detalji objekta */}
         <Route path="/managers" element={<PrivateRoute element={<ManagersList />} />} />
+        <Route path="/manager/:userId/objects" element={<PrivateRoute element={<ManagerObjects />} />} />
         <Route path="/users" element={<PrivateRoute element={<UsersList />} />} />
         <Route path="/myprofile" element={<PrivateRoute element={<MyProfile />} />} />
       </Routes>

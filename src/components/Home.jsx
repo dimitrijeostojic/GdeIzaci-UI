@@ -43,7 +43,7 @@ const Home = () => {
                     'Authorization': `Bearer ${token}`  // Dodaj token u zaglavlje
                 }
             });
-            const selected = response.data.slice(0,8);
+            const selected = response.data.slice(0, 8);
             setObjects(selected);
         } catch (error) {
             console.error('Error fetching objects:', error);
@@ -64,7 +64,7 @@ const Home = () => {
                 <div className="objects-container">
                     <div className="objects-grid">
                         {objects.map((obj, index) => (
-                            <ObjectCard key={index} id={obj.placeID} photo={obj.photo} name={obj.name} price={obj.price} location={obj.location} />
+                            <ObjectCard key={index} id={obj.placeID} date={obj.date} photo={obj.photo} name={obj.name} price={obj.price} location={obj.location} />
                         ))}
                     </div>
                 </div>

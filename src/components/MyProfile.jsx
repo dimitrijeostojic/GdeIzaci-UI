@@ -8,7 +8,6 @@ import { jwtDecode } from 'jwt-decode';
 const MyProfile = () => {
   const token = localStorage.getItem('token');
   const [objects, setObjects] = useState([]);
-  const [users, setUsers] = useState([]);
   const [email, setEmail] = useState('');
   const username = localStorage.getItem('username');
   const role = localStorage.getItem('role');
@@ -45,8 +44,6 @@ const MyProfile = () => {
     }
   };
 
-
-
   useEffect(() => {
     fetchObjects();
     const email = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
@@ -72,7 +69,7 @@ const MyProfile = () => {
         <div className="objects-container">
           <div className="objects-grid">
             {objects.map((obj, index) => (
-              <ObjectCard key={index} id={obj.placeID} photo={obj.photo} name={obj.name} price={obj.price} location={obj.location} />
+              <ObjectCard key={index} id={obj.placeID} date={obj.date} photo={obj.photo} name={obj.name} price={obj.price} location={obj.location} />
             ))}
           </div>
         </div>

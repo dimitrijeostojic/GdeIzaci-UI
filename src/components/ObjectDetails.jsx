@@ -34,11 +34,10 @@ const ObjectDetails = () => {
     const role = localStorage.getItem('role');
     const decodedToken = jwtDecode(token);
 
-    
+
     useEffect(() => {
         fetchObjectAndUser();
         checkReservation();
-        fetchAverageRating();
         fetchRating();
     }, [id]);
 
@@ -48,11 +47,11 @@ const ObjectDetails = () => {
             setIsOwner(true);
         }
     }, [user.userName]);
-  
+
     useEffect(() => {
         fetchAverageRating();
     }, [rating]);
-    
+
 
     const fetchObjectAndUser = async () => {
         try {
@@ -80,9 +79,9 @@ const ObjectDetails = () => {
                 userID: userResponse.data.userID
             });
             const coords = await getCoordinates(response.data.location);
-            
-                setLocation(coords);
-            
+
+            setLocation(coords);
+
 
             // setRating(response.data.rating || 0);
         } catch (error) {
@@ -110,7 +109,7 @@ const ObjectDetails = () => {
 
     const fetchAverageRating = async () => {
         try {
-            const response = await axios.get(`https://localhost:5000/api/Review/average-rating/${id}`,{
+            const response = await axios.get(`https://localhost:5000/api/Review/average-rating/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -174,7 +173,6 @@ const ObjectDetails = () => {
             console.error('Error updating rating:', error);
         }
     };
-
 
     const handleBookNow = async () => {
         try {
@@ -300,6 +298,15 @@ const ObjectDetails = () => {
         }
     }
 
+    // Formatiranje datuma
+    const formatDate = (dateStr) => {
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // meseci su 0-indeksirani
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
 
     if (loading) return <p>Loading...</p>;
     if (!object) return <p>No object found</p>;
@@ -315,25 +322,26 @@ const ObjectDetails = () => {
                     </div>
                     <div className="object-footer">
                         <h1>{object.name}</h1>
+                        <h3>Date: {formatDate(object.date)}</h3>
                         <p className='object-footer-type'>Object Type: {object.placeItem.name}</p>
                         <p className='object-footer-rating'>Number of Stars:</p>
                         {role !== 'Admin' && (
                             <Rating
                                 initialRating={rating}
                                 onChange={(newRating) => {
-                                    if (rating===0) {
+                                    if (rating === 0) {
                                         handleAddRatingChange(newRating)
                                     }
-                                    else{
-                                         handleEditRatingChange(newRating)
+                                    else {
+                                        handleEditRatingChange(newRating)
                                     }
                                 }}
                                 emptySymbol={<FontAwesomeIcon icon={farStar} className="fa-star-o" />}
                                 fullSymbol={<FontAwesomeIcon icon={faStar} className="fa-star" />}
-                                fractions={2} 
+                                fractions={2}
                             />
                         )}
-                        <p className="average-grade">Average rating: {averageRating===null ? "No ratings available for this place" : averageRating}</p>
+                        <p className="average-grade">Average rating: {averageRating === null ? "No ratings available for this place" : averageRating}</p>
                         <p className='object-footer-location'>Location: {object.location}</p>
                         <p className='object-footer-price'>Price: ${object.price}</p>
                         <p className='object-footer-description'>Description: {object.description}</p>
@@ -371,6 +379,7 @@ const ObjectDetails = () => {
                 names={object.name}
                 prices={object.price}
                 locations={object.location}
+                dates={object.date}
                 descriptions={object.description}
                 types={object.placeItem.name}
                 photoUrls={object.photo}
