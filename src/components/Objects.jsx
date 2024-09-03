@@ -26,8 +26,12 @@ const Objects = () => {
       setUserRole(userRole);
     }
     fetchObjects();
-    fetchPlaceItems(); // Dodajte ovu funkciju za preuzimanje placeItems
   }, [filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize]);
+  
+  useEffect(() => {
+    fetchPlaceItems();
+  }, [])
+  
 
   const fetchObjects = async () => {
     try {
@@ -52,7 +56,11 @@ const Objects = () => {
 
   const fetchPlaceItems = async () => {
     try {
-      const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
+      const response = await axios.get('https://localhost:5000/api/PlaceItem',{
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }); // Ažurirajte URL ako je potrebno
       setPlaceItems(response.data);
     } catch (error) {
       console.error('Error fetching place items:', error);

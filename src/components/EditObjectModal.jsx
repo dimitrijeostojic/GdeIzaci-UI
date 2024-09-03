@@ -16,12 +16,17 @@ const EditObjectModal = ({ isOpen, onRequestClose, onEditObject, names, prices, 
     const [selectedPlaceItem, setSelectedPlaceItem] = useState('');
     const [placeItems, setPlaceItems] = useState([]);
     const [selectedPlaceItemDetails, setSelectedPlaceItemDetails] = useState(id);
+    const token = localStorage.getItem('token');
 
 
     // Učitaj placeItems iz baze kada se komponenta učita
     const fetchPlaceItems = async () => {
         try {
-            const response = await axios.get('https://localhost:5000/api/PlaceItem'); // Ažurirajte URL ako je potrebno
+            const response = await axios.get('https://localhost:5000/api/PlaceItem',{
+                headers:{
+                    'Authorization': `Bearer ${token}`
+                }
+            }); // Ažurirajte URL ako je potrebno
             setPlaceItems(response.data);
             setSelectedPlaceItem(types);
         } catch (error) {

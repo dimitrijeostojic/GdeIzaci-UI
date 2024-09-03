@@ -26,8 +26,20 @@ const Login = () => {
       setError('');
       navigate('/home');
     } catch (error) {
-      setError('Login failed. Please try again.');
-      console.log(error.response.data);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errors = error.response.data.errors;
+        console.error('Validation errors:', errors);
+
+        // Na primer, možeš proći kroz greške i prikazati ih
+        for (const [field, messages] of Object.entries(errors)) {
+            console.error(`${field}: ${messages.join(', ')}`);
+        }
+        alert('Error: ' + Object.values(errors).flat().join('\n'));
+        setError('Login failed. Please try again.');
+    } else {
+        console.error('Error login:', error);
+        setError('Login failed. Please try again.');
+    }
     }
   };
 

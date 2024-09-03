@@ -17,7 +17,6 @@ const ObjectDetails = () => {
     const { id } = useParams();
     const [object, setObject] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [isOwner, setIsOwner] = useState(false);
     const [location, setLocation] = useState(null);
     const [isBooked, setIsBooked] = useState(false);
@@ -80,18 +79,14 @@ const ObjectDetails = () => {
                 numberOfObjects: userResponse.data.numberOfObjects,
                 userID: userResponse.data.userID
             });
-
             const coords = await getCoordinates(response.data.location);
-            if (coords) {
+            
                 setLocation(coords);
-            } else {
-                setError('Unable to determine object location.');
-            }
+            
 
             // setRating(response.data.rating || 0);
         } catch (error) {
             console.error('Error fetching data:', error);
-            setError('Error fetching data.');
         } finally {
             setLoading(false);
         }
@@ -165,7 +160,6 @@ const ObjectDetails = () => {
     const handleEditRatingChange = async (newRating) => {
         try {
             const reviewData = {
-                placeID: id, // Zamenite stvarnim ID-jem mesta
                 numberOfStars: newRating
             };
 
@@ -308,7 +302,6 @@ const ObjectDetails = () => {
 
 
     if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
     if (!object) return <p>No object found</p>;
 
     return (
