@@ -16,17 +16,36 @@ const MyProfile = () => {
 
   const fetchObjects = async () => {
     try {
+      const currentUserId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
       const response = await axios.get('https://localhost:5000/api/Place', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      const selected = response.data.slice(-8);
+      let selected = [];
+      console.log(response.data);
+      if (role === "Manager") {
+        // Filtriraj objekte koje je kreirao prijavljeni menadžer
+        selected = response.data.filter(element => element.userCreatedID === currentUserId);
+      } else if (role === "Admin") {
+        // Prikaz zadnjih 8 objekata ako je korisnik admin
+        selected = response.data.slice(0, 8);
+      } else {
+        // Ako je običan korisnik, možeš implementirati dodatnu logiku ako je potrebno
+        const response = await axios.get(`https://localhost:5000/api/Place/user/${currentUserId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        selected = response.data;
+      }
       setObjects(selected);
     } catch (error) {
       console.error('Error fetching objects:', error);
     }
   };
+
+
 
   useEffect(() => {
     fetchObjects();
@@ -46,7 +65,9 @@ const MyProfile = () => {
       </div>
       <div className="my-profile-objects">
         <div className='my-profile-title'>
-          <h2>New Objects</h2>
+          {
+            role === "Manager" ? (<h2>My Objects</h2>) : role === "RegularUser" ? (<h2>Booked Objects</h2>) : (<h2>New Objects</h2>)
+          }
         </div>
         <div className="objects-container">
           <div className="objects-grid">

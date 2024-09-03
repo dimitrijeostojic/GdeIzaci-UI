@@ -43,7 +43,7 @@ const Home = () => {
                     'Authorization': `Bearer ${token}`  // Dodaj token u zaglavlje
                 }
             });
-            const selected = response.data.slice(-8);
+            const selected = response.data.slice(0,8);
             setObjects(selected);
         } catch (error) {
             console.error('Error fetching objects:', error);
