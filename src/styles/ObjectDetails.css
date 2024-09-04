@@ -132,3 +132,20 @@
 .fa-star-o {
     color: lightgray;
 }
+
+.numberOfUsers{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.numberOfUsers p{
+    color: #fff;
+}
+
+.numberOfUsers input{
+    height: 30px;
+    width: 10%
+}

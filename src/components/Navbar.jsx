@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Navbar.css";
-import jwt_decode from "jwt-decode";
 
 const Navbar = () => {
   const navigate = useNavigate();

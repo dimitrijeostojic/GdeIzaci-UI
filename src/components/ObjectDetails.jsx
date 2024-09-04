@@ -24,6 +24,7 @@ const ObjectDetails = () => {
     const [isCancled, setIsCancled] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [averageRating, setAverageRating] = useState(null);
+    const [numberOfUsers, setNumberOfUsers] = useState(1);
     const [user, setUser] = useState({
         userName: '',
         numberOfObjects: 0,
@@ -100,8 +101,9 @@ const ObjectDetails = () => {
                 },
                 params: { userId: userId }
             });
-            setIsBooked(response.data);
-            setIsCancled(!response.data);
+            setNumberOfUsers(response.data.numberOfUsers);
+            setIsBooked(response.data.isReserved);
+            setIsCancled(!response.data.isReserved);
         } catch (error) {
             console.error('Error checking reservation:', error);
         }
@@ -180,7 +182,8 @@ const ObjectDetails = () => {
             const reservationData = {
                 placeID: id,
                 reservationDateTime: new Date().toISOString(), // Primer za trenutni datum i vreme
-                userID: userId
+                userID: userId,
+                numberOfUsers: numberOfUsers
             };
 
             await axios.post(`https://localhost:5000/api/Reservation`, reservationData, {
@@ -298,6 +301,15 @@ const ObjectDetails = () => {
         }
     }
 
+    const handleNumberOfUsersChange = (e) => {
+        const value = parseInt(e.target.value, 10);
+        if (value < 1) {
+            setNumberOfUsers(1); // Postavite na minimalnu vrednost
+        } else {
+            setNumberOfUsers(value); // Postavite na unetu vrednost ako je validna
+        }
+      };
+
     // Formatiranje datuma
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
@@ -369,6 +381,10 @@ const ObjectDetails = () => {
                     <div className="book-button">
                         <button className='book' onClick={handleBookNow} disabled={isBooked || isOwner}>{isBooked ? 'Booked' : 'Book Now'}</button>
                         <button className='book' onClick={handleCancel} disabled={isCancled || isOwner}>Cancel</button>
+                    </div>
+                    <div className="numberOfUsers">
+                        <p>Enter number of users:</p>
+                        <input type="number" max={10} min={1} disabled={isBooked || isOwner} onChange={handleNumberOfUsersChange} value={numberOfUsers} />
                     </div>
                 </div>
             </div>
