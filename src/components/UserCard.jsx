@@ -17,14 +17,11 @@ const UserCard = (props) => {
                         }
                     }
                 );
-                if (response.status === 200) {
-                    props.refreshUsers();
-                } else {
-                    console.error('Došlo je do greške prilikom promene uloge');
-                }
+                props.refreshUsers();
+                alert("The system has changed the role for this user");
             }
         } catch (error) {
-            console.error('Greška prilikom pozivanja API-ja:', error);
+            alert("The system can't change the role for this user");
         }
     };
 
@@ -37,16 +34,11 @@ const UserCard = (props) => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-
-                if (response.status === 200) {
-                    console.log(`Korisnik ${props.userName} obrisan`);
                     props.refreshUsers();
-                } else {
-                    console.error('Došlo je do greške prilikom brisanja korisnika');
-                }
+                    alert("The system has successfully deleted this user");
             }
         } catch (error) {
-            console.error('Greška prilikom pozivanja API-ja:', error);
+            alert("The system can't delete this user");
         }
     };
 

@@ -95,7 +95,7 @@ const Objects = () => {
         }
       });
 
-      alert('Object added successfully');
+      alert('The system has successfully created the object');
       fetchObjects(); // Osvježite listu objekata
     } catch (error) {
       if (error.response && error.response.data && error.response.data.errors) {
@@ -106,7 +106,7 @@ const Objects = () => {
         for (const [field, messages] of Object.entries(errors)) {
           console.error(`${field}: ${messages.join(', ')}`);
         }
-        alert('Error adding object: ' + Object.values(errors).flat().join('\n'));
+        alert("The system can't create the object: " + Object.values(errors).flat().join('\n'));
       } else {
         console.error('Error adding object:', error);
         alert('Error adding object.');
@@ -136,7 +136,8 @@ const Objects = () => {
           <button className="add-object-button" disabled={userRole === 'RegularUser' || userRole === "Admin"} onClick={() => setIsModalOpen(true)}>+ Add Object</button>
         </div>
         <div className="objects-grid">
-          {objects.map((obj, index) => (
+          {objects.length===0 ? <p>Sistem can't find any objects</p>:
+          objects.map((obj, index) => (
             <ObjectCard key={index} id={obj.placeID} date={obj.date} name={obj.name} price={obj.price} location={obj.location} photo={obj.photo} />
           ))}
         </div>

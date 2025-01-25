@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/HomeDescription.css';
 
-const PraznaKomponenta = (props) => {
+const HomeDescription = (props) => {
   return (
     <div className="description-container">
       <p className="description-text">{props.text}</p>
@@ -13,4 +13,4 @@ const PraznaKomponenta = (props) => {
   );
 };
 
-export default PraznaKomponenta;
+export default HomeDescription;

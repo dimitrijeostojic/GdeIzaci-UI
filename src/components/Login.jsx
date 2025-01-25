@@ -34,7 +34,7 @@ const Login = () => {
         for (const [field, messages] of Object.entries(errors)) {
           console.error(`${field}: ${messages.join(', ')}`);
         }
-        alert('Error: ' + Object.values(errors).flat().join('\n'));
+        alert('System login failed: ' + Object.values(errors).flat().join('\n'));
         setError('Login failed. Please try again.');
       } else {
         console.error('Error login:', error);

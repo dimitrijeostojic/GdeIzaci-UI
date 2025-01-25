@@ -36,20 +36,17 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
         }
     };
 
-    useEffect(() => {
-        fetchPlaceItems();
-    }, []);
-
+    
     const handlePlaceItemChange = (event) => {
         const selectedName = event.target.value;
         setSelectedPlaceItem(selectedName);
         const selectedItem = placeItems.find(item => item.name === selectedName);
         setSelectedPlaceItemDetails(selectedItem.placeItemID);
     };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        
         const newObject = {
             name,
             description,
@@ -59,7 +56,7 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
             photo: photo,
             placeItemId: selectedPlaceItemDetails, // Postavi ID umesto naziva
         };
-
+        
         try {
             onAddObject(newObject);
             setName('');
@@ -74,7 +71,11 @@ const AddObjectModal = ({ isOpen, onRequestClose, onAddObject }) => {
             console.error('Error adding object:', error);
         }
     };
-
+    
+    useEffect(() => {
+        fetchPlaceItems();
+    }, []);
+    
     return (
         <Modal
             isOpen={isOpen}

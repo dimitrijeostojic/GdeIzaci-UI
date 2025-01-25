@@ -79,12 +79,10 @@ const ObjectDetails = () => {
                 numberOfObjects: userResponse.data.numberOfObjects,
                 userID: userResponse.data.userID
             });
-            const coords = await getCoordinates(response.data.location);
 
+            const coords = await getCoordinates(response.data.location);
             setLocation(coords);
 
-
-            // setRating(response.data.rating || 0);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -153,8 +151,10 @@ const ObjectDetails = () => {
                 }
             });
             setRating(newRating);
+            alert("The system has left a review for this object");
         } catch (error) {
             console.error('Error updating rating:', error);
+            alert("The system can't leave a review for this object");
         }
     };
 
@@ -171,8 +171,10 @@ const ObjectDetails = () => {
                 }
             });
             setRating(newRating);
+            alert("The system change a review for this object");
         } catch (error) {
             console.error('Error updating rating:', error);
+            alert("The system can't change a review for this object");
         }
     };
 
@@ -192,11 +194,12 @@ const ObjectDetails = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            alert("You have Succesfully booked");
+            alert("The system has successfully reserved this object for you");
             setIsBooked(true); // Postavi dugme na "Booked" nakon uspešne rezervacije
             setIsCancled(false);
         } catch (error) {
             console.error('Error creating reservation:', error);
+            alert("The system can't reserve this object for you");
         }
     };
 
@@ -216,9 +219,11 @@ const ObjectDetails = () => {
                 });
                 setIsBooked(false);
                 setIsCancled(true);
+                alert("The system canceled the reservation");
             }
         } catch (error) {
             console.error('Error cancelling reservation:', error);
+            alert("The system can't cancel the reservation");
         }
     };
 
@@ -308,7 +313,7 @@ const ObjectDetails = () => {
         } else {
             setNumberOfUsers(value); // Postavite na unetu vrednost ako je validna
         }
-      };
+    };
 
     // Formatiranje datuma
     const formatDate = (dateStr) => {
@@ -321,7 +326,10 @@ const ObjectDetails = () => {
 
 
     if (loading) return <p>Loading...</p>;
-    if (!object) return <p>No object found</p>;
+    if (!object) return (<div>
+        {alert("No object found")}<p>No object found</p>
+    </div>
+    );
 
     return (
         <div className="details">

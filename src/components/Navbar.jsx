@@ -10,11 +10,17 @@ const Navbar = () => {
 
 
   const handleLogout = () => {
-    // Ukloni token iz localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    localStorage.removeItem("role");
-    navigate("/login");
+    try {
+      // Ukloni token iz localStorage
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+      navigate("/login");
+      
+    }
+    catch (error) {
+      alert("Logout failed");
+    }
   };
 
   return (

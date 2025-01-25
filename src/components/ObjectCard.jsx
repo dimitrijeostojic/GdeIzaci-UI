@@ -8,7 +8,11 @@ const ObjectCard = (prop) => {
   const navigate = useNavigate();
 
   const ObjectDetails = () => {
-    navigate(`/objects/${prop.id}`);
+    try {
+      navigate(`/objects/${prop.id}`);
+    } catch (error) {
+      alert("System can't load the object");
+    }
   }
 
   // Formatiranje datuma
